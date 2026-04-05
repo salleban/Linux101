@@ -1,0 +1,98 @@
+## Hakemiston luonti
+
+Lähdin ensitöikseen muistelemaan komentoja, ennen kuin lähdin sen enempää harjoitusta suorittamaan. Käytin apuna Moodlen sisältöä sekä hyödynsin tekoälyä muistamisessa.
+Käynnistettyäni Virtuaalikoneen ja terminaalin, ajoin päivitykset sudo apt update sekä sudo apt upgrade. 
+
+Seuraavana osiossa oli tekeminen ja korjaaminen. Lähdin luomaan ensin ohjeistuksen mukaisesti uutta hakemistoa kotihakemiston sisälle. Nimenä käytin practicea, kuten tehtävässä oli myös hakemisto nimetty. 
+Työn ohessa huomasin tajuavani myös uudelleen nimeämistä sekä hakemistojen poistamista, sillä muutamat virheet rokottivat työn etenemistä. 
+
+Käytin hakemiston luomiseen mkdir ~/practice ja mkdir ~/practice/docs jne. Väärin kirjoituksen huomasin luodessani Images hakemistoa joten korjaavat toimenpiteet tein lisäämällä images hakemiston ja poistamalla imges tiedoston. 
+Poistamiseen käytin komentoa rmdir ~/practice/imges.
+
+Seuraavaksi lisään tekstitiedostot. Käytän molemmissa samaa tapaa, eli avaan tekstitiedostot suoraan nano editorissa, kun luon tiedostot. Komentona käytän nano ~/practice/docs/notes1.txt ja nano ~/practice/docs/notes2.txt.
+Notes1.txt sisällytän 10 eri eläintä ja notes2.txt 10 eri vihannesta/marjaa. Tallennus tapahtuu CTRL + X, jonka jälkeen ohjelma kysyy tallennusta, jonka vahvistan painamalla Y. Kun tämän jälkeen menen practicen/docs ja kirjoitan ls, löytyy nämä molemmat tekstitiedostot docs:n alta. 
+
+Seuraavaksi tekstitiedostot tulee uudelleen nimetä, jotta tiedetään, mitä tekstitiedostot pitävät sisällää. 
+Tässä on pari ei tapaa, kuinka tämä tehdään, mutta tässä kohtaa, kun olemme jo oikeassa hakemistossa, riittää kuin antaa komennoksi mv notes1.txt ja perään kirjoittaa uuden teksitiedoston nimen, esimerkiksi itse käytin animals.txt.
+
+Lopulliset komennot ovat seuraavat mv notes1.txt animals.txt sekä mv notes2.txt fruitsnveggies.txt. 
+
+Sitten luodaan varmuuskopio tiedostosta animals.txt. Alkuperäisen ohjeistuksen mukaisesti backups hakemisto on jo luotu practice hakemistoon, joten tätä osuutta ei tarvitse tehdä erikseen. 
+Varmuuskopion tein seuraavalla komennolla, cp ~/practice/docs/animals.txt ~/practice/backups/
+
+Nyt kun avaan backups hakemiston cd backups ja kirjoitan seuraavaksi ls, löydän kyseisen tiedoston backups hakemistosta. 
+Seuraavaksi varmistetaan, että kaikki toimii. Avaan alkuperäisestä hakemistosta animals.txt ja poistan kolme eläintä listalta ja tallennan. Tämän jälkeen siirryn katsomaan backups hakemistoon, että kaikki on alkuperäisesti. 
+
+Siirryn docs hakemistosta pois cd .. ja kirjoitan cd backups ja lopuksi nano animals.txt, ja huomaan kolmen poistetun eläimen edelleen löytyvän backups listalta. 
+
+## Grep & Pipe
+
+Aloitetaan Grep komentoon tutustuminen. Syötetään terminaaliin tehtävässä annettu komento echo -e “apple\nbanana\norange\nApple pie” > fruits.txt.
+Ensin aloitetaa kokeilemalla mitä tapahtuu, kun kirjottaa komennon grep apple fruits.txt - terminaali antaa vastaukseksi apple.
+  - Tässä grep haku etsii sanoja, jossa ilmenee sana apple.
+    
+Toisena käytetään komentoa grep -i apple fruits.txt - terminaali antaa vastaukseksi apple ja Apple pie.
+  - Grep -i etsii sanaa riippumatta siitä, onko se kirjoitettu pienellä kirjaimella, isolla kirjaimella tai sekoitukselle, esimerkiksi ApPlE.
+    
+Kolmantena komennoksi laitetaan grep -n apple fruits.txt - terminaali antaa vastaukseksi 1:apple
+  - Grep -n etsii sanaa sekä ilmoitaa siitä, millä rivillä sana havaitaan.
+    
+Neljäntenä grep -ni apple fruits.txt - terminaali antaa vastaukseksi 1:apple 4:Apple pie
+  - Grep -ni on -i ja -n yhdistelmä, eli se etsii sanaa riippumatta miten se on kirjoitettu ja ilmoittaa miltä riviltä sana löytyy.
+    
+Viimeisenä grep -v apple fruits.txt - terminaali luettelee banana, orange ja Apple pie. 
+  - Grep -v näyttää päinvastaisesti kaikki sanat, jotka eivät sisällä oikein kirjoitettua sanaa, eli apple. Näin ollen -v löysi banana, orange ja Apple pie.
+
+
+Jatketaan Pipe komentoon tutustumista. Syötetään terminaaliin tehtävässä annettu komento echo -e "dog\ncat\nhorse\ncow\ncatfish" > animals.txt.
+
+Ensimmäisenä kokeillaan komentoa cat animals.txt | grep cat
+  - Pipe, eli "|" etsii animals.txt tiedostosta cat sanaa. Tämän avulla löytyy cat sekä catfish. 
+
+Toisena cat animals.txt | wc -l
+  - Tällä haulla pipe etsii, montako tiedostoa hakemistossa on. Tässä tapauksessa vastauksena on 5. 
+
+Ja viimeisenä cat animals.txt | sort | uniq.
+  - Tämä listaa tiedostot aakkosjärjestykseen allekkain.
+    cat
+    catfish
+    cow
+    dog
+    horse.
+
+GPL-2 Lisenssi
+
+Testataan yllä mainittuja hakuja GPL-2 Lisenssiin. 
+
+Mitä tekee komento grep GNU /usr/share/common-licenses/GPL-2?
+  Tämä antaa GNU GPL-2 lisenssin yleistiedot. 
+
+Suurimmalta osin saan ainoastaan permission denied tai timed out, jokin vialla?
+
+ ## Btop
+
+Asennetaan btop linux terminaalissa sudo apt-get install btop ja tämän jälkeen käynnistetään btop kirjoittamalla vain btop.
+
+Btop antaa sinulle paljon dataa, mistä sinulla ei välttämättä ole hajuakaan. Tämä vain esimerkkinä. 
+Paina M jos haluat päästä valikkoon ja tätä kautta asetuksiin. Q painamalla voit sulkea btopin. 
+
+Painetaan Q ja tutkitaan seuraavaa asiaa:
+
+Minne binäärit menevät? Katsotaan tämä komennolla which btop. Vastauksena on /usr/bin/btop.
+
+Kun halutaan selvittää asennetun ohjelmiston tiedostojen sijainnit, toimii seuraava komento hyvin btop ohjelmiston esimerkissä: dpkg -L btop.
+Tämä näyttää useampia eri osoitteita, mistä löytyy btop ohjelmistoon liittyviä tiedostoja. Suurrimmalta osin kuitenkin /usr/share..
+
+Kyseisen osion kanssa ilmennyt hieman ongelmia, joten tämä jää vajaaksi. Kokeilin vaihtaa hieman asetuksia ohjeistuksen mukaisesti, esimerkiksi update speed 2000 ms -> 300ms, ja huomasin selkeästi eroa. 
+Eron huomasi etenkin, kun yritti katsoa muita asetuksia, sillä 300ms on huomattavasti nopeampi lataus nopeus, kuin 2000ms. 
+
+## CLI 
+
+Minä otin itse kokeiluun ncdu CLI:n, joka näyttää virtuaalisesti levykapasiteetin omalla virtuaalityöasemalla. 
+
+
+
+
+  
+
+
