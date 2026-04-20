@@ -1,1 +1,99 @@
+## Etäpalvelin
 
+Module 4 kohdassa aloitamme tutustumaan etäpalvelimen käyttöön. 
+
+Aloitetaan kirjautumalla sisään henkilökohtaisilla tunnuksilla, jotka on väliaikaisesti meille luotu. 
+Nimenä käytetään linuxuser:ia. Komennoksi annetaan ssh linuxuser@xxx.xxx.xxx.xxx ja syötetään salasana, joka on aikaisemmin muutettu uudeksi. 
+
+Kun ollaan kirjauduttu sisään, tarkistetaan ssh status seuraavalla komennolla: 
+sudo systemctl status ssh.
+
+Tästä saamme selville, että tila on aktiivinen ja hakemisto on enabled tilassa. 
+Myös huomaan ilmoituksen "password check failed for user (root)."
+
+## SSH Key
+
+Aloitetaan generoimalla ssh-key antamalla kyseinen komento: ssh-keygen. 
+Syötetään passphrase kahteen kertaan. Ole tarkkana tämän kanssa. Keygen on nyt tallennettu.
+
+Tämän jälkeen saamme fingerprintin sekä randomart kuvan. 
+
+Jatketaan kopioimalla avain komennolla ssh-copy-id linuxuser@xxx.xxx.xxx.xxx
+Tämän jälkeen komento kysyy halutaanko jatkaa yhdistämistä. Komento antaa antaa vaihtoehdot Yes/No/Fingerprint, kirjoita yes. 
+
+Nyt tulee tieto, että yksi avain on lisätty.
+
+Kokeilemme seuraavaksi kirjautua sisään käyttämällä komentoa ssh linuxuser@test030, painetaan yes, kun kysytään halutaanko jatkaa yhdistymistä ja kirjoitetaan salasana. 
+Kirjautuminen onnistuu. 
+
+## Apachen asennus  
+
+Aloitetaan päivittämällä etäpalvelin.
+sudo apt update. Tämän jälkeen asennetaan Apache. 
+
+sudo apt install apache2 -y, ja katsotaan, että kaikki on kunnossa sudo systemctl status apache2. Tila näyttää olevan active(running), eli kaikki toimii.
+
+Sitten luodaan sisältöä Apache default web page:n. Kirjoitetaan komento echo "this is my test default page" | sudo tee /var/www/html/index.html.
+Kokeillaan selaimen kautta kirjoittamalla http://xxx.xxx.xxx.xxx. Tähän tulee oikea näkymä. 
+
+Kokeillaan vielä samaa curl:n avulla, eli curl http://xxx.xxx.xxx.xxx, ja saadaan näkyviin sama tieto komentoriveille, kuin selaimessakin. 
+
+Lopuksi luodaan uusi hakemisto kotihakemistoon. Tässä halutaan saada lopputulokseksi hakemisto /home/linuxuser/public-sites.
+
+Avataan kotihakemisto cd /home. Tämän jälkeen luodaan linuxuser:n alle public-sites. Kirjoitetaan sudo mkdir -p /linuxuser/public-sites
+Varmistetaan, että hakemisto on luotu ja kirjoitetaan ls. Public-sites löytyy nyt hakemistosta. 
+
+## Asennetaan ufw
+
+Aloitetaan komennolla sudo apt install ufw -y -> sudo ufw allow ssh -> sudo ufw allow 22/tcp ja lopuksi katsotaan status sudo ufw status. 
+Tässä huomataan statuksen olevan aktiivinen ja 22/tcp on käytössä. 
+
+Lisätään vielä portit 80 sekä 443, sudo ufw allow 80/tcp sekä sudo ufw allow 443/tcp.
+
+## Networking
+
+Aloitetaan asentamalla ngrep etäpalvelimelle, sudo apt-get install ngrep. 
+
+Avataan toinen ja kolmas terminaali, täysin varmuutta ei ole, pitääkö olla toisen terminaalin olla myös linuxuser:lla vai omalla "käyttäjällä", joten nyt on kolme eri terminaalia käytössä.
+
+HTTP
+
+Ajetaan ohjeistuksen mukainen komento linuxuser terminaalissa sudo ngrep -d eth0 -W byline "" host <ip-address> and port 80.
+
+Ajetaan toisessa ja kolmannessa terminaalissa komento curl http://xxx.xxx.xxx.xxx. 
+Vastauksena tulee molempiin sama, eli "This is my test default page". 
+
+Terminaaliin 1 tulee taas enemmän tietoja. Tarkemmin en osaa valitettavasti selittää, mitä nämä tarkoittavat, mutta tämä antaa enemmän dataa mitä ollaan haettu. 
+Tässä on sisällöstä tietoa esimerkiksi tekstin pituudesta ja tekstityypistä. 
+
+*kuva* 
+
+ssh
+
+Ajetaan ohjeistuken komento terminaalissa 1, sudo ngrep -d eth0 -W byline "" port 22.
+
+Terminaali alkaa latelemaan kauhean määrän sekavaa tekstiä, mitä ei pysty lukemaan. 
+Ainoastaan tekstien väleissä ilmenee eri IP osoitteita. 
+
+*kuva*
+
+Teksti kertoo sen, että tämä ei ole luettavissa, joka on turvallisuuteen viittaava. Tähän saattaa toimia salausavain?
+
+ping
+
+Viimeisenä ajetaan terminaaliin 1 ohjeistuksen mukainen komento sudo ngrep -d eth0 -W byline "" icmp
+Ja terminaaliin 2 ajetaan komento ping 8.8.8.8.
+
+*kuva*
+
+Terminaali 1 alkaa pingaamaan kuvan mukaista sisältöä. Terminaali 2 pingaa myös, mutta antaa tarkemmin tiedon, kuinka useasti pingaus tapahtuu. 
+
+ICMP on yksi niistä protokollista, jotka eivät näy käyttäjälle suoraan, mutta ilman sitä internet ei toimisi luotettavasti. 
+Se on osa IP‑protokollaperhettä ja toimii verkon diagnostiikka‑ ja virheilmoitusjärjestelmänä.
+
+Loppuun vielä kokeilemme tcpdump komentoa ja vertaillaan eroa ngrep komentoon.
+Syötetään ohjeistuksen mukainen komento sudo tcpdump -i eth0 icmp terminaaliin 1 ja käydään vielä terminaali 2 lisäämässä ping 8.8.8.8
+
+Terminaalissa 1 alkaa tapahtu alla olevaa pingausta. Tämä on silmään hieman selkeämpi minun mielestäni. Data on helpommin luettavissa. 
+
+*kuva*
